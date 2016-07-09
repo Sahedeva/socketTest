@@ -10,6 +10,7 @@ router.get('/', function(req, res, next) {
 io.on('connection',function(socket){
   console.log('a user connected');
   socket.on('chatMessage', function(msg){
+    console.log(msg);
     io.emit('chatMessage', msg);
   });
 });
