@@ -3,9 +3,39 @@
   <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js" charset="utf-8"></script>
   </head>
   <body>
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
+    <form class="chat">
+      <label for="chatMessage">Chat Message: </label>
+      <input id="chat" type="text" name="chatMessage" value="">
+      <input type="submit" name="submit" value="Submit">
+    </form>
+    <div class="result">
+
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io.connect('/');
+      socket.on('announcements', function(data) {
+          console.log('Got announcement:', data.message);
+      });
+      socket.emit('event', { message: 'Hey, I have an important message!'});
+      $('.chat').on('submit', function(event){
+        event.preventDefault();
+        var message = $("#chat").val();
+        $("#chat").val("");
+        console.log(message);
+        socket.emit('event', { message: message});
+      });
+      //
+      socket.on('Incoming', function(data) {
+          console.log('Incoming:', data.message);
+          $('.result').html(data.message);
+      });
+      //
+    </script>
   </body>
 </html>
