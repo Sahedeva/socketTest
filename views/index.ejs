@@ -16,6 +16,16 @@
     <div class="result">
 
     </div>
+    <form class="join">
+      <input id="channel" type="text">
+      <input type="submit" value="Join">
+    </form>
+    <form class="chatJoin">
+      <label for="chatMessage">Chat Message: </label>
+      <input id="chatJoin" type="text" name="chatMessage" value="">
+      <input type="submit" name="submit" value="Submit">
+    </form>
+    <div class="resultJoin"></div>
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var clientId = 0;
@@ -46,6 +56,24 @@
       socket.on('Incoming', function(data) {
           console.log('Incoming message from client#',data.clientId,':', data.message);
           $('.result').append('Client #'+data.clientId+':'+data.message+'<br>');
+      });
+       $('.join').on('submit', function(event) {
+          event.preventDefault();
+          var channel = $('#channel').val();
+          socket.emit('join', channel, function() {
+            console.log(channel);
+          });
+        });
+       $('.chatJoin').on('submit', function(event){
+        event.preventDefault();
+        var message = $("#chatJoin").val();
+        $("#chatJoin").val("");
+        console.log(message);
+        socket.emit('eventJoin', { message: message, clientId:clientId });
+      });
+       socket.on('IncomingJoin', function(data) {
+          console.log('Incoming message from client#',data.clientId,':', data.message);
+          $('.resultJoin').append('Client #'+data.clientId+':'+data.message+'<br>');
       });
       //
     </script>

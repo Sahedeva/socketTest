@@ -12,6 +12,13 @@ var clientId = 0;
 io.on('connection',function(socket){
   numClients++;
   clientId++
+  socket.on('join', function(channel, ack, oldChannel) {
+    socket.leave(oldChannel);
+    socket.join(channel);
+    ack();
+    console.log(channel);
+  });
+
   var message = "You have connected and your id is " + clientId;
   socket.emit('conn',{message:message,clientId:clientId});
   var message = 'A new client has connected';
@@ -33,6 +40,10 @@ io.on('connection',function(socket){
   socket.on('event', function(data) {
         console.log('Client #',data.clientId,'sent us this dumb message:', data.message);
         io.emit('Incoming', {message: data.message, clientId: data.clientId});
+  });
+  socket.on('eventJoin', function(data) {
+        console.log('Client #',data.clientId,'sent us this dumb message:', data.message);
+        io.to('2').emit('IncomingJoin', {message: data.message, clientId: data.clientId});
   });
 
 });
